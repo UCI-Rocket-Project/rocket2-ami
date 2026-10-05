@@ -7351,16 +7351,6 @@
 		)
 		(uuid "2d60847f-3b56-4029-88bf-ec1724463b9f")
 	)
-	(label "ACCEL_INT0"
-		(at 41.91 71.12 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "2eac9ce4-9f77-487d-8996-167faa73524a")
-	)
 	(label "IMU_ALT_TC_MISO"
 		(at 64.77 203.2 0)
 		(effects
@@ -7460,6 +7450,16 @@
 			(justify left)
 		)
 		(uuid "525867f0-0eda-4d2c-8acb-6abe4f052a02")
+	)
+	(label "ACCEL_INT1"
+		(at 41.91 71.12 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "591f18bc-2ba7-42b4-ac9e-1529d8263a34")
 	)
 	(label "TC_~{CS}"
 		(at 87.63 91.44 0)
@@ -7771,16 +7771,6 @@
 		)
 		(uuid "c5a445fd-9858-4989-9c6a-21dd92c8be9b")
 	)
-	(label "ACCEL_INT1"
-		(at 41.91 73.66 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "c5c9a0ec-d49b-481a-b162-6b3a115de839")
-	)
 	(label "MEM_~{CS}"
 		(at 87.63 99.06 0)
 		(effects
@@ -7840,6 +7830,16 @@
 			(justify left)
 		)
 		(uuid "d43491c9-b1ce-494e-8290-c15000ba03d0")
+	)
+	(label "ACCEL_INT0"
+		(at 41.91 73.66 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "d88dd3ae-ead1-40f3-aeb3-a83c7418485d")
 	)
 	(label "SWDCLK"
 		(at 179.07 186.69 0)
