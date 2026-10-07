@@ -28,3 +28,7 @@ fabrication/
 UCIRP-Logo.svg
 
 *.lck
+
+sym-lib-table
+fp-lib-table
+fabrication-toolkit-options.json
