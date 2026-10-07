@@ -508,7 +508,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "rocket2-afs2.kicad_pro",
+    "filename": "rocket2-ami.kicad_pro",
     "version": 3
   },
   "net_settings": {
@@ -702,8 +702,8 @@
     "subpart_id_separator": 0,
     "top_level_sheets": [
       {
-        "filename": "rocket2-afs2.kicad_sch",
-        "name": "rocket2-afs2",
+        "filename": "rocket2-ami.kicad_sch",
+        "name": "rocket2-ami",
         "uuid": "9e07604d-04d7-4fa4-8142-03e55958d1f9"
       }
     ],
