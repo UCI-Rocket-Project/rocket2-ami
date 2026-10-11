@@ -27,6 +27,8 @@ fabrication/
 \#auto_saved_files\#
 UCIRP-Logo.svg
 
+production/*
+
 *.lck
 
 sym-lib-table
