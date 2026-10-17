@@ -10571,7 +10571,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/vishay-dale/CRCW06035K10FKEA/1174748"
 			(at 309.88 142.24 0)
 			(effects
 				(font
@@ -10589,7 +10589,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Generic"
+		(property "Manufacturer" "Vishay Dale"
 			(at 309.88 142.24 0)
 			(effects
 				(font
@@ -10598,7 +10598,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" "Generic 0603 5.1k 1% Resistor"
+		(property "Part #" "CRCW06035K10FKEA"
 			(at 309.88 142.24 0)
 			(effects
 				(font
@@ -11198,7 +11198,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/yageo/RC0402FR-0710KL/729470"
 			(at 266.7 77.47 0)
 			(effects
 				(font
@@ -11216,7 +11216,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Generic"
+		(property "Manufacturer" "YAGEO"
 			(at 266.7 77.47 0)
 			(effects
 				(font
@@ -11225,7 +11225,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" "Generic RES SMD 10K OHM 1% 1/16W 0402"
+		(property "Part #" "RC0402FR-0710KL"
 			(at 266.7 77.47 0)
 			(effects
 				(font
@@ -11288,7 +11288,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.st.com/resource/en/datasheet/usblc6-2.pdf"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/stmicroelectronics/USBLC6-2SC6/1040559"
 			(at 331.47 156.845 0)
 			(effects
 				(font
@@ -11370,7 +11370,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/murata-electronics/GRM188Z71C475KE21J/16033436"
 			(at 21.59 34.29 0)
 			(effects
 				(font
@@ -11456,7 +11456,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/yageo/RC0603FR-0733KL/727159"
 			(at 312.42 128.27 0)
 			(effects
 				(font
@@ -11474,7 +11474,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Generic"
+		(property "Manufacturer" "YAGEO"
 			(at 312.42 128.27 0)
 			(effects
 				(font
@@ -11483,7 +11483,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" "Generic 0603 33k 1% Resistor"
+		(property "Part #" "RC0603FR-0733KL"
 			(at 312.42 128.27 0)
 			(effects
 				(font
@@ -11544,7 +11544,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/kemet/C0603C104K5RACTU/1465594"
 			(at 44.45 34.29 0)
 			(effects
 				(font
@@ -11631,7 +11631,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/yageo/RC0402FR-07750RL/2827573"
 			(at 90.17 147.32 0)
 			(effects
 				(font
@@ -11649,7 +11649,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Generic"
+		(property "Manufacturer" "YAGEO"
 			(at 90.17 147.32 0)
 			(effects
 				(font
@@ -11658,7 +11658,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" "Generic 0402 750 1% Resistor"
+		(property "Part #" "RC0402FR-07750RL"
 			(at 90.17 147.32 0)
 			(effects
 				(font
@@ -12310,7 +12310,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/yageo/RC0603FR-0782KL/727400"
 			(at 320.04 128.27 0)
 			(effects
 				(font
@@ -12328,7 +12328,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Generic"
+		(property "Manufacturer" "YAGEO"
 			(at 320.04 128.27 0)
 			(effects
 				(font
@@ -12337,7 +12337,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" "Generic 0603 82k 1% Resistor"
+		(property "Part #" "RC0603FR-0782KL"
 			(at 320.04 128.27 0)
 			(effects
 				(font
@@ -12575,7 +12575,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "325"
+		(property "Value" "330"
 			(at 101.854 136.144 0)
 			(effects
 				(font
@@ -12593,7 +12593,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/yageo/RC0402FR-07330RL/726594"
 			(at 100.33 134.62 0)
 			(effects
 				(font
@@ -12611,7 +12611,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Generic"
+		(property "Manufacturer" "YAGEO"
 			(at 100.33 134.62 0)
 			(effects
 				(font
@@ -12620,7 +12620,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" "Generic 0402 325 1% Resistor"
+		(property "Part #" "RC0402FR-07330RL"
 			(at 100.33 134.62 0)
 			(effects
 				(font
@@ -12813,7 +12813,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/kemet/C0603C104K5RACTU/1465594"
 			(at 25.4 200.66 0)
 			(effects
 				(font
@@ -13067,7 +13067,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/MAX31855.pdf"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/analog-devices-inc-maxim-integrated/MAX31855KASA/2591564"
 			(at 97.79 252.73 0)
 			(effects
 				(font
@@ -13130,93 +13130,6 @@
 			(project "rocket2-ami"
 				(path "/9e07604d-04d7-4fa4-8142-03e55958d1f9"
 					(reference "U30")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R_Small_US")
-		(at 21.59 58.42 180)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "42836155-ea54-45cc-a3ef-c526389071af")
-		(property "Reference" "R10"
-			(at 24.13 57.15 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Value" "10K"
-			(at 24.13 59.69 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 21.59 58.42 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 21.59 58.42 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 21.59 58.42 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Manufacturer" "Generic"
-			(at 21.59 58.42 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Part #" "Generic 10K 1% 0402 Resistor"
-			(at 21.59 58.42 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "1028cd81-7bd3-4b83-b576-dfaed94eca55")
-		)
-		(pin "2"
-			(uuid "fe51bdb3-f21f-40ea-846f-88b310549654")
-		)
-		(instances
-			(project "rocket2-ami"
-				(path "/9e07604d-04d7-4fa4-8142-03e55958d1f9"
-					(reference "R10")
 					(unit 1)
 				)
 			)
@@ -13388,7 +13301,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/vishay-dale/CRCW06035K10FKEA/1174748"
 			(at 309.88 134.62 0)
 			(effects
 				(font
@@ -13406,7 +13319,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Generic"
+		(property "Manufacturer" "Vishay Dale"
 			(at 309.88 134.62 0)
 			(effects
 				(font
@@ -13415,7 +13328,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" "Generic 0603 5.1k 1% Resistor"
+		(property "Part #" "CRCW06035K10FKEA"
 			(at 309.88 134.62 0)
 			(effects
 				(font
@@ -13540,7 +13453,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/kemet/C0603C104K5RACTU/1465594"
 			(at 21.59 68.58 0)
 			(effects
 				(font
@@ -13566,7 +13479,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" "Generic 100nF 6.3V X7R 0402 MLCC"
+		(property "Part #" "Generic 0603 6.3V 100nF X7R MLCC"
 			(at 21.59 68.58 0)
 			(effects
 				(font
@@ -13758,7 +13671,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.st.com/resource/en/datasheet/stm32f105rc.pdf"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/stmicroelectronics/STM32F105RCT6/2074112"
 			(at 64.77 104.14 0)
 			(effects
 				(font
@@ -14056,7 +13969,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" ""
+		(property "Part #" "Generic 0603 6.3V 22uF X5R MLCC"
 			(at 190.5 45.72 0)
 			(effects
 				(font
@@ -14117,7 +14030,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/kemet/C0603C104K5RACTU/1465594"
 			(at 78.74 34.29 0)
 			(effects
 				(font
@@ -14204,7 +14117,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/yageo/RC0402FR-0710KL/729470"
 			(at 191.77 133.35 0)
 			(effects
 				(font
@@ -14222,7 +14135,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Generic"
+		(property "Manufacturer" "YAGEO"
 			(at 191.77 133.35 0)
 			(effects
 				(font
@@ -14231,7 +14144,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" "Generic RES SMD 10K OHM 1% 1/16W 0402"
+		(property "Part #" "RC0402FR-0710KL"
 			(at 191.77 133.35 0)
 			(effects
 				(font
@@ -14357,7 +14270,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/kemet/C0603C104K5RACTU/1465594"
 			(at 135.89 137.16 0)
 			(effects
 				(font
@@ -14840,7 +14753,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "325"
+		(property "Value" "330"
 			(at 96.774 142.494 0)
 			(effects
 				(font
@@ -14858,7 +14771,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/yageo/RC0402FR-07330RL/726594"
 			(at 95.25 140.97 0)
 			(effects
 				(font
@@ -14876,7 +14789,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Generic"
+		(property "Manufacturer" "YAGEO"
 			(at 95.25 140.97 0)
 			(effects
 				(font
@@ -14885,7 +14798,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" "Generic 0402 325 1% Resistor"
+		(property "Part #" "RC0402FR-07330RL"
 			(at 95.25 140.97 0)
 			(effects
 				(font
@@ -15351,7 +15264,7 @@
 				)
 			)
 		)
-		(property "Value" "10uF"
+		(property "Value" "22uF"
 			(at 135.89 31.242 0)
 			(effects
 				(font
@@ -15368,7 +15281,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/kyocera-avx/0603YD226MAT2A/17866383"
 			(at 135.89 38.1 0)
 			(effects
 				(font
@@ -15377,7 +15290,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "Unpolarized capacitor, small symbol (22uF acting as 10uF accounting for DC bias)"
 			(at 135.89 38.1 0)
 			(effects
 				(font
@@ -15395,7 +15308,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" "Generic 0603 16V 10uF X7R MLCC"
+		(property "Part #" "Generic 0603 16V 22uF X5R MLCC"
 			(at 135.89 38.1 0)
 			(effects
 				(font
@@ -15520,7 +15433,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/yageo/RC0402FR-0710KL/729470"
 			(at 154.94 132.08 0)
 			(effects
 				(font
@@ -15538,7 +15451,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Generic"
+		(property "Manufacturer" "YAGEO"
 			(at 154.94 132.08 0)
 			(effects
 				(font
@@ -15547,7 +15460,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" "Generic RES SMD 10K OHM 1% 1/16W 0402"
+		(property "Part #" "RC0402FR-0710KL"
 			(at 154.94 132.08 0)
 			(effects
 				(font
@@ -15608,7 +15521,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/kemet/C0603C104K5RACTU/1465594"
 			(at 90.17 34.29 0)
 			(effects
 				(font
@@ -15827,7 +15740,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/murata-electronics/GRM155R71H103KA88D/1033275"
 			(at 67.31 246.38 0)
 			(effects
 				(font
@@ -15845,7 +15758,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Generic"
+		(property "Manufacturer" "Murata Electronics"
 			(at 67.31 246.38 0)
 			(effects
 				(font
@@ -15854,7 +15767,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" "Generic CAP CER 10NF 6.3V X7R 0402"
+		(property "Part #" "GRM155R71H103KA88D"
 			(at 67.31 246.38 0)
 			(effects
 				(font
@@ -16172,7 +16085,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/kemet/C0603C104K5RACTU/1465594"
 			(at 210.82 45.72 0)
 			(effects
 				(font
@@ -16199,7 +16112,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" ""
+		(property "Part #" "Generic 0603 6.3V 100nF X7R MLCC"
 			(at 210.82 45.72 0)
 			(effects
 				(font
@@ -16574,7 +16487,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" ""
+		(property "Part #" "Generic 0603 6.3V 22uF X5R MLCC"
 			(at 185.42 45.72 0)
 			(effects
 				(font
@@ -16700,7 +16613,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/kemet/C0603C104K5RACTU/1465594"
 			(at 67.31 34.29 0)
 			(effects
 				(font
@@ -16788,7 +16701,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/kemet/C0603C104K5RACTU/1465594"
 			(at 55.88 34.29 0)
 			(effects
 				(font
@@ -16900,7 +16813,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" ""
+		(property "Part #" "Generic 0603 6.3V 22uF X5R MLCC"
 			(at 195.58 45.72 0)
 			(effects
 				(font
@@ -17136,7 +17049,7 @@
 				)
 			)
 		)
-		(property "Value" "10uF"
+		(property "Value" "22uF"
 			(at 128.27 46.736 0)
 			(effects
 				(font
@@ -17153,7 +17066,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/kyocera-avx/0603YD226MAT2A/17866383"
 			(at 128.27 38.1 0)
 			(effects
 				(font
@@ -17162,7 +17075,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "Unpolarized capacitor, small symbol (22uF acting as 10 uF)"
 			(at 128.27 38.1 0)
 			(effects
 				(font
@@ -17180,7 +17093,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" "Generic 0603 16V 10uF X7R MLCC"
+		(property "Part #" "Generic 0603 16V 22uF X5R MLCC"
 			(at 128.27 38.1 0)
 			(effects
 				(font
@@ -17305,7 +17218,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.winbond.com/resource-files/W25N01GV%20Rev%20O%20092619.pdf"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/winbond-electronics/W25N01GVZEIG/15181734"
 			(at 170.18 139.7 0)
 			(effects
 				(font
@@ -17756,7 +17669,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/kemet/C0603C104K5RACTU/1465594"
 			(at 317.5 45.72 0)
 			(effects
 				(font
@@ -17844,7 +17757,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/kemet/C0603C104K5RACTU/1465594"
 			(at 166.37 87.63 0)
 			(effects
 				(font
@@ -17931,7 +17844,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/yageo/RC0402FR-0710KL/729470"
 			(at 85.09 200.66 0)
 			(effects
 				(font
@@ -17949,7 +17862,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Generic"
+		(property "Manufacturer" "YAGEO"
 			(at 85.09 200.66 0)
 			(effects
 				(font
@@ -17958,7 +17871,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" "Generic RES SMD 10K OHM 1% 1/16W 0402"
+		(property "Part #" "RC0402FR-0710KL"
 			(at 85.09 200.66 0)
 			(effects
 				(font
@@ -18019,7 +17932,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/adxl383.pdf"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/analog-devices-inc/ADXL383-1BCCZ-RL7/29768944"
 			(at 280.67 50.8 0)
 			(effects
 				(font
@@ -18189,7 +18102,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/murata-electronics/GRM155R71H104KE14D/4906220"
 			(at 148.59 236.22 0)
 			(effects
 				(font
@@ -18207,7 +18120,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Generic"
+		(property "Manufacturer" "Murata Electronics"
 			(at 148.59 236.22 0)
 			(effects
 				(font
@@ -18216,7 +18129,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" "Generic CAP CER 0.1UF 6.3V X7R 0402"
+		(property "Part #" "GRM155R71H104KE14D"
 			(at 148.59 236.22 0)
 			(effects
 				(font
@@ -18300,6 +18213,93 @@
 			(project "rocket2-ami"
 				(path "/9e07604d-04d7-4fa4-8142-03e55958d1f9"
 					(reference "#PWR063")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R_Small_US")
+		(at 21.59 58.42 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "b5200e33-959a-4a05-b052-9476e28267ba")
+		(property "Reference" "R10"
+			(at 24.13 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10K"
+			(at 24.13 59.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+			(at 21.59 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/yageo/RC0402FR-0710KL/729470"
+			(at 21.59 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor, small US symbol"
+			(at 21.59 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "YAGEO"
+			(at 21.59 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Part #" "RC0402FR-0710KL"
+			(at 21.59 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "ebabb541-3d93-45d7-a9ce-9caaabda8d01")
+		)
+		(pin "1"
+			(uuid "fb5c3846-17c1-49ef-a33a-df255ba06df4")
+		)
+		(instances
+			(project "rocket2-ami"
+				(path "/9e07604d-04d7-4fa4-8142-03e55958d1f9"
+					(reference "R10")
 					(unit 1)
 				)
 			)
@@ -18407,7 +18407,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/kemet/C0603C104K5RACTU/1465594"
 			(at 349.25 224.79 0)
 			(effects
 				(font
@@ -18495,7 +18495,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/murata-electronics/GRM188Z71C475KE21J/16033436"
 			(at 330.2 124.46 0)
 			(effects
 				(font
@@ -18582,7 +18582,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/yageo/RC0402FR-0710KL/729470"
 			(at 279.4 210.82 0)
 			(effects
 				(font
@@ -18600,7 +18600,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Generic"
+		(property "Manufacturer" "YAGEO"
 			(at 279.4 210.82 0)
 			(effects
 				(font
@@ -18609,7 +18609,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" "Generic RES SMD 10K OHM 1% 1/16W 0402"
+		(property "Part #" "RC0402FR-0710KL"
 			(at 279.4 210.82 0)
 			(effects
 				(font
@@ -18651,7 +18651,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "10K"
+		(property "Value" "10.2K"
 			(at 174.752 54.61 0)
 			(effects
 				(font
@@ -18669,7 +18669,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/panasonic-industry/ERA-2AEB1022X/2026144"
 			(at 180.34 53.34 0)
 			(effects
 				(font
@@ -18886,7 +18886,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/yageo/RC0402FR-071KL/729460"
 			(at 53.34 241.3 0)
 			(effects
 				(font
@@ -18904,7 +18904,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" "Generic RES SMD 1K OHM 1% 1/16W 0402"
+		(property "Part #" "RC0402FR-071KL"
 			(at 53.34 241.3 90)
 			(effects
 				(font
@@ -19298,7 +19298,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/kemet/C0603C104K5RACTU/1465594"
 			(at 168.91 38.1 0)
 			(effects
 				(font
@@ -19325,7 +19325,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" ""
+		(property "Part #" "Generic 0603 6.3V 100nF X7R MLCC"
 			(at 168.91 38.1 0)
 			(effects
 				(font
@@ -19582,7 +19582,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/yageo/RC0402FR-071KL/729460"
 			(at 53.34 262.89 0)
 			(effects
 				(font
@@ -19600,7 +19600,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" "Generic RES SMD 1K OHM 1% 1/16W 0402"
+		(property "Part #" "RC0402FR-071KL"
 			(at 53.34 262.89 90)
 			(effects
 				(font
@@ -19660,7 +19660,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/yageo/RC0402FR-0710KL/729470"
 			(at 130.81 246.38 0)
 			(effects
 				(font
@@ -19678,7 +19678,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Generic"
+		(property "Manufacturer" "YAGEO"
 			(at 130.81 246.38 0)
 			(effects
 				(font
@@ -19687,7 +19687,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" "Generic RES SMD 10K OHM 1% 1/16W 0402"
+		(property "Part #" "RC0402FR-0710KL"
 			(at 130.81 246.38 0)
 			(effects
 				(font
@@ -19729,7 +19729,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "31.3K"
+		(property "Value" "31.6K"
 			(at 177.546 39.37 0)
 			(effects
 				(font
@@ -19747,7 +19747,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/panasonic-industry/ERA-2AEB3162X/2026187"
 			(at 180.34 45.72 0)
 			(effects
 				(font
@@ -19834,7 +19834,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/murata-electronics/GRM155R71H103KA88D/1033275"
 			(at 67.31 259.08 0)
 			(effects
 				(font
@@ -19852,7 +19852,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Generic"
+		(property "Manufacturer" "Murata Electronics"
 			(at 67.31 259.08 0)
 			(effects
 				(font
@@ -19861,7 +19861,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" "Generic CAP CER 10NF 6.3V X7R 0402"
+		(property "Part #" "GRM155R71H103KA88D"
 			(at 67.31 259.08 0)
 			(effects
 				(font
@@ -19921,7 +19921,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/yageo/RC0402FR-0710KL/729470"
 			(at 256.54 210.82 0)
 			(effects
 				(font
@@ -19939,7 +19939,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Generic"
+		(property "Manufacturer" "YAGEO"
 			(at 256.54 210.82 0)
 			(effects
 				(font
@@ -19948,7 +19948,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" "Generic RES SMD 10K OHM 1% 1/16W 0402"
+		(property "Part #" "RC0402FR-0710KL"
 			(at 256.54 210.82 0)
 			(effects
 				(font
@@ -20006,7 +20006,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/eaton-electronics-division/HCM0703-4R7-R/2295030"
 			(at 173.99 41.91 0)
 			(effects
 				(font
@@ -20336,7 +20336,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/murata-electronics/GRM155R71H104KE14D/4906220"
 			(at 58.42 252.73 0)
 			(effects
 				(font
@@ -20354,7 +20354,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Generic"
+		(property "Manufacturer" "Murata Electronics"
 			(at 58.42 252.73 0)
 			(effects
 				(font
@@ -20363,7 +20363,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" "Generic CAP CER 0.1UF 6.3V X7R 0402"
+		(property "Part #" "GRM155R71H104KE14D"
 			(at 58.42 252.73 0)
 			(effects
 				(font
@@ -20394,7 +20394,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "e718107d-424a-4675-b378-55485ca32587")
 		(property "Reference" "C27"
 			(at 205.74 52.07 0)
@@ -20448,7 +20448,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" ""
+		(property "Part #" "Generic 0603 6.3V 22uF X5R MLCC"
 			(at 205.74 45.72 0)
 			(effects
 				(font
@@ -20663,7 +20663,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" ""
+		(property "Part #" "Generic 0603 6.3V 22uF X5R MLCC"
 			(at 200.66 45.72 0)
 			(effects
 				(font
@@ -20854,7 +20854,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/kemet/C0603C104K5RACTU/1465594"
 			(at 337.82 224.79 0)
 			(effects
 				(font
@@ -21007,7 +21007,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/kemet/C0603C104K5RACTU/1465594"
 			(at 33.02 34.29 0)
 			(effects
 				(font
@@ -21222,7 +21222,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/kemet/C0603C104K5RACTU/1465594"
 			(at 143.51 38.1 0)
 			(effects
 				(font
@@ -21249,7 +21249,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part #" "Generic 0603 16V 100nF X7R MLCC"
+		(property "Part #" "Generic 0603 50V 100nF X7R MLCC"
 			(at 143.51 38.1 0)
 			(effects
 				(font
@@ -21440,7 +21440,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/kemet/C0603C104K5RACTU/1465594"
 			(at 303.53 62.23 0)
 			(effects
 				(font
@@ -21528,7 +21528,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/kemet/C0603C104K5RACTU/1465594"
 			(at 328.93 45.72 0)
 			(effects
 				(font
@@ -21614,7 +21614,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.ti.com/lit/ds/symlink/tps62933.pdf"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/texas-instruments/TPS62933PDRLR/16669314?s=N4IgTCBcDaICoAUDKA2MBOAzJhIC6AvkA"
 			(at 157.48 64.77 0)
 			(effects
 				(font
