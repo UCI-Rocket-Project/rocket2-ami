@@ -1,3 +1,7 @@
 [submodule "UCIRP-KiCAD-Lib"]
 	path = UCIRP-KiCAD-Lib
 	url = https://github.com/UCI-Rocket-Project/UCIRP-KiCAD-Lib.git
+[submodule "RocketDrivers"]
+	path = RocketDrivers
+	url = https://github.com/UCI-Rocket-Project/rocket-stm32hal-drivers.git
+	branch = Update-adc_max11614_i2c

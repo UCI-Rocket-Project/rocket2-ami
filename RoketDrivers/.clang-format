@@ -1,5 +1,0 @@
-BasedOnStyle:  Google
-AccessModifierOffset: -2
-ColumnLimit: 200
-IndentWidth: 4
-AllowShortEnumsOnASingleLine: false

@@ -1,54 +1,48 @@
 #include "main.h"
 #include "cpp_main.h"
-#include "stm32f1xx_hal_tim.h"
-#include <math.h>
+#include "ami_controller.h"
 
-extern SPI_HandleTypeDef hspi1;
-extern SPI_HandleTypeDef hspi2;
-extern SPI_HandleTypeDef hspi3;
+// // Inspect these in the debugger after startup. Registers 0x00..0x03 are
+// // DEVID_AD, DEVID_MST, PART_ID, and PART_ID_REV_ID, respectively.
+// volatile uint8_t adxl383_ids[4] = {};
+// volatile HAL_StatusTypeDef adxl383_id_status = HAL_ERROR;
+// volatile bool adxl383_id_valid = false;
 
-extern TIM_HandleTypeDef htim2;
-extern TIM_HandleTypeDef htim3;
+// static HAL_StatusTypeDef adxl383_read_register(uint8_t address, uint8_t *value) {
+//     // ADXL383 SPI command: 7-bit address followed by R/W=1, then 8 clocks
+//     // to shift out the register value. Keep CS low for both bytes.
+//     uint8_t tx[2] = {static_cast<uint8_t>((address << 1U) | 1U), 0x00};
+//     uint8_t rx[2] = {};
 
-extern UART_HandleTypeDef huart4;
+//     HAL_GPIO_WritePin(ACCEL_nCS_GPIO_Port, ACCEL_nCS_Pin, GPIO_PIN_RESET);
+//     HAL_StatusTypeDef status = HAL_SPI_TransmitReceive(&hspi1, tx, rx, 2, 100);
+//     HAL_GPIO_WritePin(ACCEL_nCS_GPIO_Port, ACCEL_nCS_Pin, GPIO_PIN_SET);
 
-extern PCD_HandleTypeDef hpcd_USB_OTG_FS;
-
-void set_red_brightness(float duty_cycle) {
-    if (duty_cycle > 1) duty_cycle = 1;
-    if (duty_cycle < 0) duty_cycle = 0;
-    uint32_t pulse = 36000U * (1.0f - duty_cycle) / 1.0f;
-    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, pulse);
-}
-
-void set_green_brightness(float duty_cycle) {
-    if (duty_cycle > 1) duty_cycle = 1;
-    if (duty_cycle < 0) duty_cycle = 0;
-    uint32_t pulse = 36000U * (1.0f - duty_cycle) / 1.0f;
-    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, pulse);
-}
-
-void set_blue_brightness(float duty_cycle) {
-    if (duty_cycle > 100) duty_cycle = 100;
-    uint32_t pulse = 36000U * (100U - duty_cycle) / 100U;
-    __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_4, pulse);
-}
+//     if (status == HAL_OK) {
+//         *value = rx[1];
+//     }
+//     return status;
+// }
 
 void cpp_main(void) {
-    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_4); // Red
-    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3); // Green
-    HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_4); // Blue
+    static AMIController controller;
+    controller.Init();
+    controller.Run();
+    // // GPIO initialization leaves ACCEL_nCS low; deselect the sensor before
+    // // starting a new SPI transaction. Allow its power-up/NVM load to finish.
+    // HAL_GPIO_WritePin(ACCEL_nCS_GPIO_Port, ACCEL_nCS_Pin, GPIO_PIN_SET);
+    // HAL_Delay(3);
 
-    float ms = 0;
-
-    while (1) {
-        float phase = 2.0f * 3.141592f * ms / 2000.0f;
-        float green_wave = 0.5f * sinf(phase + 2.0f) + 0.5f;  // 0 to +1
-        set_red_brightness(0);
-        set_green_brightness(green_wave * 0.2f);
-        set_blue_brightness(0);
-
-        ms++;
-        HAL_Delay(1);
-    }
+    // adxl383_id_status = HAL_OK;
+    // for (uint8_t address = 0; address < 4; ++address) {
+    //     uint8_t value = 0;
+    //     adxl383_id_status = adxl383_read_register(address, &value);
+    //     if (adxl383_id_status != HAL_OK) {
+    //         break;
+    //     }
+    //     adxl383_ids[address] = value;
+    // }
+    // adxl383_id_valid = adxl383_id_status == HAL_OK &&
+    //                     adxl383_ids[0] == 0xAD && adxl383_ids[1] == 0x1D &&
+    //                     adxl383_ids[2] == 0x17 && (adxl383_ids[3] & 0xF0) == 0xC0;
 }
