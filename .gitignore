@@ -34,3 +34,5 @@ production/*
 sym-lib-table
 fp-lib-table
 fabrication-toolkit-options.json
+
+*.step

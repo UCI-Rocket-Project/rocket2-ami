@@ -575,7 +575,7 @@
       "plot": "",
       "pos_files": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "rocket2-ami.step",
       "svg": "",
       "vrml": ""
     },
