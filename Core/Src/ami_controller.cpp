@@ -1,7 +1,6 @@
 #include "ami_controller.h"
 #include "main.h"
 #include "stm32f1xx_hal_tim.h"
-#include <math.h>
 
 extern SPI_HandleTypeDef hspi1;
 extern SPI_HandleTypeDef hspi2;
@@ -39,11 +38,12 @@ AMIController::AMIController(): scheduler(GetCurrentTime10us),
     led(&htim2, TIM_CHANNEL_4, &htim2, TIM_CHANNEL_3, &htim3, TIM_CHANNEL_4),
     accel(&hspi1, ACCEL_nCS_GPIO_Port, ACCEL_nCS_Pin) {
     instance = this;
+    led.SetDefaultPulse({0.0f, 0.8f, 0.0f}, 2000U * MS);
 }
 
 void AMIController::Init() {
     /*
-    * Initialize timers (1 ms resolution)
+    * Initialize timers (10 us resolution)
     */
     // Make sure to start the slave before the master
     HAL_TIM_Base_Start(&htim5);
@@ -68,11 +68,17 @@ void AMIController::Init() {
     */
     allPeripheralsGood &= accel.Init();
 
+    if (allPeripheralsGood) {
+        led.QueueBlink({0.0f, 0.8f, 0.0f}, 3000 * MS, 500 * MS);
+    } else {
+        led.QueueBlink({1.0f, 0.0f, 0.0f}, 3000 * MS, 500 * MS);
+    }
+
 
     /*
     * Register tasks
     */
-    ledTaskId = *scheduler.AddTask(PulseLEDTask, 0);
+    ledTaskId = *scheduler.AddTask(ProcessLEDTask, 0);
 
     scheduler.ScheduleTaskDeltaTime(ledTaskId, 0);
 }
@@ -83,14 +89,7 @@ void AMIController::Run() {
     }
 }
 
-void AMIController::PulseLEDTask() {
-    float phase = 2.0f * 3.141592f * GetCurrentTime10us() / (2000.0f * MS);
-    float green_wave = 0.5f * sinf(phase + 2.0f) + 0.5f;  // 0 to +1
-    green_wave = green_wave * green_wave * green_wave;
-
-    instance->led.setRedBrightness(0);
-    instance->led.setGreenBrightness(green_wave * 0.8f);
-    instance->led.setBlueBrightness(0);
-
+void AMIController::ProcessLEDTask() {
+    instance->led.Process(GetCurrentTime10us());
     instance->scheduler.ScheduleTaskDeltaTime(instance->ledTaskId, 1 * MS);
 }

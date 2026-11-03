@@ -26,5 +26,5 @@ class AMIController {
     ADXL383 accel;
 
     // Task callbacks
-    static void PulseLEDTask();
+    static void ProcessLEDTask();
 };
