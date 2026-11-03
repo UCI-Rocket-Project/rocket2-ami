@@ -1,4 +1,5 @@
 #include "ami_controller.h"
+#include "main.h"
 #include "stm32f1xx_hal_tim.h"
 #include <math.h>
 
@@ -34,8 +35,9 @@ inline uint32_t GetCurrentTime10us() {
     return (high1 << 16) | low;
 }
 
-AMIController::AMIController(): scheduler(GetCurrentTime),
-    led(&htim2, TIM_CHANNEL_4, &htim2, TIM_CHANNEL_3, &htim3, TIM_CHANNEL_4) {
+AMIController::AMIController(): scheduler(GetCurrentTime10us),
+    led(&htim2, TIM_CHANNEL_4, &htim2, TIM_CHANNEL_3, &htim3, TIM_CHANNEL_4),
+    accel(&hspi1, ACCEL_nCS_GPIO_Port, ACCEL_nCS_Pin) {
     instance = this;
 }
 
@@ -53,11 +55,18 @@ void AMIController::Init() {
     htim4.Instance->EGR = TIM_EGR_UG;
     htim5.Instance->EGR = TIM_EGR_UG;
 
+    bool allPeripheralsGood = true;
 
     /*
     * Initialize LED
     */
     led.Init();
+
+
+    /*
+    * Initialize accel
+    */
+    allPeripheralsGood &= accel.Init();
 
 
     /*
@@ -75,7 +84,7 @@ void AMIController::Run() {
 }
 
 void AMIController::PulseLEDTask() {
-    float phase = 2.0f * 3.141592f * GetCurrentTime() / (2000.0f * MS);
+    float phase = 2.0f * 3.141592f * GetCurrentTime10us() / (2000.0f * MS);
     float green_wave = 0.5f * sinf(phase + 2.0f) + 0.5f;  // 0 to +1
     green_wave = green_wave * green_wave * green_wave;
 

@@ -3,6 +3,7 @@
 #include "main.h"
 #include "task_scheduler.h"
 #include "led.h"
+#include "accel_adxl383.h"
 
 #define MS 100
 
@@ -22,6 +23,7 @@ class AMIController {
 
     // Hardware
     RGBLED led;
+    ADXL383 accel;
 
     // Task callbacks
     static void PulseLEDTask();
