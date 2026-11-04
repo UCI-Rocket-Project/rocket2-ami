@@ -36,9 +36,9 @@ inline uint32_t GetCurrentTime10us() {
 
 AMIController::AMIController(): scheduler(GetCurrentTime10us),
     led(&htim2, TIM_CHANNEL_4, &htim2, TIM_CHANNEL_3, &htim3, TIM_CHANNEL_4),
-    accel(&hspi1, ACCEL_nCS_GPIO_Port, ACCEL_nCS_Pin) {
+    accel(&hspi1, ACCEL_nCS_GPIO_Port, ACCEL_nCS_Pin, ACCEL_INT0_Pin) {
     instance = this;
-    led.SetDefaultPulse({0.0f, 0.8f, 0.0f}, 2000U * MS);
+    led.SetDefaultPulse({0.0f, 0.0f, 0.4f}, 2000U * MS);
 }
 
 void AMIController::Init() {
@@ -79,7 +79,9 @@ void AMIController::Init() {
     * Register tasks
     */
     ledTaskId = *scheduler.AddTask(ProcessLEDTask, 0);
+    adxlTaskId = *scheduler.AddTask(ProcessADXLTask, 0);
 
+    scheduler.ScheduleTaskDeltaTime(adxlTaskId, 0);
     scheduler.ScheduleTaskDeltaTime(ledTaskId, 0);
 }
 
@@ -92,4 +94,19 @@ void AMIController::Run() {
 void AMIController::ProcessLEDTask() {
     instance->led.Process(GetCurrentTime10us());
     instance->scheduler.ScheduleTaskDeltaTime(instance->ledTaskId, 1 * MS);
+}
+
+void AMIController::ProcessADXLTask() {
+    instance->accel.ProcessTask();
+    instance->scheduler.ScheduleTaskDeltaTime(instance->adxlTaskId, 0.1 * MS);
+}
+
+extern "C" {
+    void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+        AMIController::instance->accel.FIFOWatermarkIntCallback(GPIO_Pin);
+    }
+
+    void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi) {
+        AMIController::instance->accel.TxCompleteCallback(hspi);
+    }
 }

@@ -15,16 +15,20 @@ class AMIController {
     void Init();
     void Run();
 
+    // Hardware
+    ADXL383 accel;
+
   private:
 
     // Task scheduler setup
     TaskScheduler<10, 3> scheduler;
     size_t ledTaskId;
+    size_t adxlTaskId;
 
     // Hardware
     RGBLED led;
-    ADXL383 accel;
 
     // Task callbacks
     static void ProcessLEDTask();
+    static void ProcessADXLTask();
 };
