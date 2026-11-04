@@ -31,4 +31,5 @@ class AMIController {
     // Task callbacks
     static void ProcessLEDTask();
     static void ProcessADXLTask();
+    static void ProcessADXLData(const int16_t *values, size_t count);
 };

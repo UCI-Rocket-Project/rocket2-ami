@@ -36,7 +36,7 @@ inline uint32_t GetCurrentTime10us() {
 
 AMIController::AMIController(): scheduler(GetCurrentTime10us),
     led(&htim2, TIM_CHANNEL_4, &htim2, TIM_CHANNEL_3, &htim3, TIM_CHANNEL_4),
-    accel(&hspi1, ACCEL_nCS_GPIO_Port, ACCEL_nCS_Pin, ACCEL_INT0_Pin) {
+    accel(&hspi1, ACCEL_nCS_GPIO_Port, ACCEL_nCS_Pin, ACCEL_INT0_Pin, ProcessADXLData) {
     instance = this;
     led.SetDefaultPulse({0.0f, 0.0f, 0.4f}, 2000U * MS);
 }
@@ -99,6 +99,12 @@ void AMIController::ProcessLEDTask() {
 void AMIController::ProcessADXLTask() {
     instance->accel.ProcessTask();
     instance->scheduler.ScheduleTaskDeltaTime(instance->adxlTaskId, 0.1 * MS);
+}
+
+void AMIController::ProcessADXLData(const int16_t *values, size_t count) {
+    // Do something with the X, Y, Z values here.
+    (void)values;
+    (void)count;
 }
 
 extern "C" {
