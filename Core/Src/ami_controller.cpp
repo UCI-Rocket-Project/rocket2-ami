@@ -1,5 +1,6 @@
 #include "ami_controller.h"
 #include "main.h"
+#include "quick_profile.h"
 #include "stm32f1xx_hal_tim.h"
 
 extern SPI_HandleTypeDef hspi1;
@@ -21,6 +22,10 @@ size_t counter;
 float timestamp;
 float hz;
 
+extern "C" {
+volatile QuickProfile quickProfile = {};
+}
+
 // This is in 10 us/0.01 ms
 inline uint32_t GetCurrentTime10us() {
     uint32_t high1;
@@ -38,10 +43,14 @@ AMIController::AMIController(): scheduler(GetCurrentTime10us),
     led(&htim2, TIM_CHANNEL_4, &htim2, TIM_CHANNEL_3, &htim3, TIM_CHANNEL_4),
     accel(&hspi1, ACCEL_nCS_GPIO_Port, ACCEL_nCS_Pin, ACCEL_INT0_Pin, ProcessADXLData) {
     instance = this;
-    led.SetDefaultPulse({0.0f, 0.0f, 0.4f}, 2000U * MS);
+    led.SetDefaultPulse({0, 0, RGBLED::MaxBrightness * 2 / 5}, 2000U * MS);
 }
 
 void AMIController::Init() {
+    CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+    DWT->CYCCNT = 0;
+    DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+
     /*
     * Initialize timers (10 us resolution)
     */
@@ -69,9 +78,9 @@ void AMIController::Init() {
     allPeripheralsGood &= accel.Init();
 
     if (allPeripheralsGood) {
-        led.QueueBlink({0.0f, 0.8f, 0.0f}, 3000 * MS, 500 * MS);
+        led.QueueBlink({0, RGBLED::MaxBrightness * 4 / 5, 0}, 3000 * MS, 500 * MS);
     } else {
-        led.QueueBlink({1.0f, 0.0f, 0.0f}, 3000 * MS, 500 * MS);
+        led.QueueBlink({RGBLED::MaxBrightness, 0, 0}, 3000 * MS, 500 * MS);
     }
 
 
@@ -92,19 +101,32 @@ void AMIController::Run() {
 }
 
 void AMIController::ProcessLEDTask() {
+    const uint32_t start = DWT->CYCCNT;
     instance->led.Process(GetCurrentTime10us());
     instance->scheduler.ScheduleTaskDeltaTime(instance->ledTaskId, 1 * MS);
+    ProfileRecord(quickProfile.ledTask, start);
 }
 
 void AMIController::ProcessADXLTask() {
+    const uint32_t start = DWT->CYCCNT;
     instance->accel.ProcessTask();
     instance->scheduler.ScheduleTaskDeltaTime(instance->adxlTaskId, 0.1 * MS);
+    ProfileRecord(quickProfile.accelTask, start);
 }
 
+int16_t x = 0;
+int16_t y = 0;
+int16_t z = 0;
+
 void AMIController::ProcessADXLData(const int16_t *values, size_t count) {
+    const uint32_t start = DWT->CYCCNT;
     // Do something with the X, Y, Z values here.
+    x = values[0];
+    y = values[1];
+    z = values[2];
     (void)values;
     (void)count;
+    ProfileRecord(quickProfile.accelDataCallback, start);
 }
 
 extern "C" {
