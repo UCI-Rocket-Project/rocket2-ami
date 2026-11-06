@@ -4,6 +4,7 @@
 #include "task_scheduler.h"
 #include "led.h"
 #include "accel_adxl383.h"
+#include <atomic>
 
 #define MS 100
 
@@ -28,10 +29,12 @@ class AMIController {
 
     // Hardware
     RGBLED led;
+    std::atomic<bool> recoveryPulsePending{false};
 
     // Task callbacks
     static void ProcessLEDTask();
     static void ProcessADXLTask();
     static void ProcessADXLData(const int16_t *values, size_t count);
+    static void OnADXLRecovery();
     static void RECINDUCE();
 };

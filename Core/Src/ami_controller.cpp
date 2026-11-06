@@ -32,7 +32,7 @@ inline uint32_t GetCurrentTime10us() {
 }
 
 AMIController::AMIController(): accel(&hspi1, ACCEL_nCS_GPIO_Port, ACCEL_nCS_Pin, ACCEL_INT0_Pin,
-        ProcessADXLData, GetCurrentTime10us),
+        ProcessADXLData, OnADXLRecovery, GetCurrentTime10us),
     scheduler(GetCurrentTime10us),
     led(&htim2, TIM_CHANNEL_4, &htim2, TIM_CHANNEL_3, &htim3, TIM_CHANNEL_4) {
     instance = this;
@@ -92,6 +92,12 @@ void AMIController::Run() {
 }
 
 void AMIController::ProcessLEDTask() {
+    if (instance->recoveryPulsePending.exchange(false, std::memory_order_relaxed)) {
+        if (!instance->led.QueuePulse({RGBLED::MaxBrightness, RGBLED::MaxBrightness / 8, 0},
+                                      3000 * MS, 500 * MS)) {
+            instance->recoveryPulsePending.store(true, std::memory_order_relaxed);
+        }
+    }
     instance->led.Process(GetCurrentTime10us());
     instance->scheduler.ScheduleTaskDeltaTime(instance->ledTaskId, 1 * MS);
 }
@@ -102,7 +108,7 @@ void AMIController::ProcessADXLTask() {
 }
 
 void AMIController::RECINDUCE() {
-    HAL_Delay(1000);
+    //HAL_Delay(5);
     instance->scheduler.ScheduleTaskDeltaTime(instance->RECINDUCERTASK, 10 * 1000 * MS);
 }
 
@@ -111,12 +117,26 @@ int16_t y = 0;
 int16_t z = 0;
 
 void AMIController::ProcessADXLData(const int16_t *values, size_t count) {
-    // Do something with the X, Y, Z values here.
-    x = values[0];
-    y = values[1];
-    z = values[2];
-    (void)values;
-    (void)count;
+    const size_t sampleSets = count / AXES;
+    if (sampleSets == 0) return;
+
+    int32_t xSum = 0;
+    int32_t ySum = 0;
+    int32_t zSum = 0;
+    for (size_t i = 0; i < sampleSets; ++i) {
+        const size_t offset = i * AXES;
+        xSum += values[offset];
+        ySum += values[offset + 1];
+        zSum += values[offset + 2];
+    }
+
+    x = static_cast<int16_t>(xSum / static_cast<int32_t>(sampleSets));
+    y = static_cast<int16_t>(ySum / static_cast<int32_t>(sampleSets));
+    z = static_cast<int16_t>(zSum / static_cast<int32_t>(sampleSets));
+}
+
+void AMIController::OnADXLRecovery() {
+    instance->recoveryPulsePending.store(true, std::memory_order_relaxed);
 }
 
 extern "C" {
