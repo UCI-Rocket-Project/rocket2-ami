@@ -24,6 +24,7 @@ class AMIController {
     TaskScheduler<10, 3> scheduler;
     size_t ledTaskId;
     size_t adxlTaskId;
+    size_t RECINDUCERTASK;
 
     // Hardware
     RGBLED led;
@@ -32,4 +33,5 @@ class AMIController {
     static void ProcessLEDTask();
     static void ProcessADXLTask();
     static void ProcessADXLData(const int16_t *values, size_t count);
+    static void RECINDUCE();
 };

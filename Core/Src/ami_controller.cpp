@@ -1,6 +1,5 @@
 #include "ami_controller.h"
 #include "main.h"
-#include "quick_profile.h"
 #include "stm32f1xx_hal_tim.h"
 
 extern SPI_HandleTypeDef hspi1;
@@ -18,13 +17,6 @@ extern PCD_HandleTypeDef hpcd_USB_OTG_FS;
 
 // Allocate memory for the static pointer
 AMIController* AMIController::instance = nullptr;
-size_t counter;
-float timestamp;
-float hz;
-
-extern "C" {
-volatile QuickProfile quickProfile = {};
-}
 
 // This is in 10 us/0.01 ms
 inline uint32_t GetCurrentTime10us() {
@@ -39,18 +31,15 @@ inline uint32_t GetCurrentTime10us() {
     return (high1 << 16) | low;
 }
 
-AMIController::AMIController(): scheduler(GetCurrentTime10us),
-    led(&htim2, TIM_CHANNEL_4, &htim2, TIM_CHANNEL_3, &htim3, TIM_CHANNEL_4),
-    accel(&hspi1, ACCEL_nCS_GPIO_Port, ACCEL_nCS_Pin, ACCEL_INT0_Pin, ProcessADXLData) {
+AMIController::AMIController(): accel(&hspi1, ACCEL_nCS_GPIO_Port, ACCEL_nCS_Pin, ACCEL_INT0_Pin,
+        ProcessADXLData, GetCurrentTime10us),
+    scheduler(GetCurrentTime10us),
+    led(&htim2, TIM_CHANNEL_4, &htim2, TIM_CHANNEL_3, &htim3, TIM_CHANNEL_4) {
     instance = this;
     led.SetDefaultPulse({0, 0, RGBLED::MaxBrightness * 2 / 5}, 2000U * MS);
 }
 
 void AMIController::Init() {
-    CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
-    DWT->CYCCNT = 0;
-    DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
-
     /*
     * Initialize timers (10 us resolution)
     */
@@ -89,9 +78,11 @@ void AMIController::Init() {
     */
     ledTaskId = *scheduler.AddTask(ProcessLEDTask, 0);
     adxlTaskId = *scheduler.AddTask(ProcessADXLTask, 0);
+    RECINDUCERTASK = *scheduler.AddTask(RECINDUCE, 0);
 
     scheduler.ScheduleTaskDeltaTime(adxlTaskId, 0);
     scheduler.ScheduleTaskDeltaTime(ledTaskId, 0);
+    scheduler.ScheduleTaskDeltaTime(RECINDUCERTASK, 10 * 1000 * MS);
 }
 
 void AMIController::Run() {
@@ -101,17 +92,18 @@ void AMIController::Run() {
 }
 
 void AMIController::ProcessLEDTask() {
-    const uint32_t start = DWT->CYCCNT;
     instance->led.Process(GetCurrentTime10us());
     instance->scheduler.ScheduleTaskDeltaTime(instance->ledTaskId, 1 * MS);
-    ProfileRecord(quickProfile.ledTask, start);
 }
 
 void AMIController::ProcessADXLTask() {
-    const uint32_t start = DWT->CYCCNT;
     instance->accel.ProcessTask();
     instance->scheduler.ScheduleTaskDeltaTime(instance->adxlTaskId, 0.1 * MS);
-    ProfileRecord(quickProfile.accelTask, start);
+}
+
+void AMIController::RECINDUCE() {
+    HAL_Delay(1000);
+    instance->scheduler.ScheduleTaskDeltaTime(instance->RECINDUCERTASK, 10 * 1000 * MS);
 }
 
 int16_t x = 0;
@@ -119,14 +111,12 @@ int16_t y = 0;
 int16_t z = 0;
 
 void AMIController::ProcessADXLData(const int16_t *values, size_t count) {
-    const uint32_t start = DWT->CYCCNT;
     // Do something with the X, Y, Z values here.
     x = values[0];
     y = values[1];
     z = values[2];
     (void)values;
     (void)count;
-    ProfileRecord(quickProfile.accelDataCallback, start);
 }
 
 extern "C" {
