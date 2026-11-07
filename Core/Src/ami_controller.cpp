@@ -8,8 +8,27 @@
 
 volatile float flashProcessLastMs = 0.0f;
 volatile float flashProcessMaxMs = 0.0f;
+volatile uint32_t flashAppendLastUs = 0;
+volatile uint32_t flashAppendMaxUs = 0;
 static float flashCyclesToMs = 0.0f;
 static uint32_t flashProcessMaxCycles = 0;
+
+namespace {
+constexpr RGBLED::Color NormalPulse{0, 0, RGBLED::MaxBrightness * 2 / 5};
+constexpr RGBLED::Color ArmedPulse{RGBLED::MaxBrightness * 2 / 5, 0, 0};
+constexpr RGBLED::Color FullPulse{RGBLED::MaxBrightness * 2 / 5, 0,
+                                   RGBLED::MaxBrightness * 2 / 5};
+constexpr uint32_t DefaultPulsePeriod = 2000U * MS;
+constexpr uint32_t RecordingBlinkPeriod = 500U * MS;
+constexpr uint32_t FlightBlinkDuration = 1000U * MS;
+constexpr uint32_t FlightBlinkPeriod = 100U * MS; // 100 ms on/off cycle
+constexpr uint32_t FlashActivityPulsePeriod = 100U * MS; // 10 Hz
+constexpr RGBLED::Color FlashActivityColor{
+    RGBLED::MaxBrightness,
+    RGBLED::MaxBrightness * 5 / 100,
+    RGBLED::MaxBrightness * 30 / 100
+};
+}
 
 extern SPI_HandleTypeDef hspi1;
 extern SPI_HandleTypeDef hspi2;
@@ -72,7 +91,7 @@ AMIController::AMIController()
       scheduler(GetCurrentTime10us),
       led(&htim2, TIM_CHANNEL_4, &htim2, TIM_CHANNEL_3, &htim3, TIM_CHANNEL_4) {
     instance = this;
-    led.SetDefaultPulse({0, 0, RGBLED::MaxBrightness * 2 / 5}, 2000U * MS);
+    led.SetDefaultPulse(NormalPulse, DefaultPulsePeriod);
     for (auto &page : capturePages_) {
         std::memset(page, 0xFF, sizeof(page));
         page[0] = 0;
@@ -123,13 +142,33 @@ void AMIController::Run() {
 
 void AMIController::ProcessLEDTask() {
     AMIController &self = *instance;
+    const bool flashActivity = self.mode_ == Mode::Erasing ||
+                               self.mode_ == Mode::DumpCsv ||
+                               self.mode_ == Mode::DumpBin;
     if (self.recoveryPulsePending.exchange(false, std::memory_order_relaxed)) {
-        if (!self.led.QueuePulse({RGBLED::MaxBrightness, RGBLED::MaxBrightness / 8, 0},
+        if (!flashActivity &&
+            !self.led.QueuePulse({RGBLED::MaxBrightness, RGBLED::MaxBrightness / 8, 0},
                                  3000 * MS, 500 * MS)) {
             self.recoveryPulsePending.store(true, std::memory_order_relaxed);
         }
     }
-    self.led.Process(GetCurrentTime10us());
+    const uint32_t now10us = GetCurrentTime10us();
+    self.led.Process(now10us);
+    if (flashActivity) {
+        // Display an operation indicator without changing the default or
+        // adding to the LED queue. Queued effects continue underneath it.
+        const uint32_t phase = now10us % FlashActivityPulsePeriod;
+        const uint32_t distanceToEdge = phase < FlashActivityPulsePeriod / 2U
+            ? phase : FlashActivityPulsePeriod - phase;
+        const uint32_t level = 2U * distanceToEdge * RGBLED::MaxBrightness /
+                               FlashActivityPulsePeriod;
+        self.led.setRedBrightness(static_cast<uint16_t>(
+            static_cast<uint32_t>(FlashActivityColor.red) * level / RGBLED::MaxBrightness));
+        self.led.setGreenBrightness(static_cast<uint16_t>(
+            static_cast<uint32_t>(FlashActivityColor.green) * level / RGBLED::MaxBrightness));
+        self.led.setBlueBrightness(static_cast<uint16_t>(
+            static_cast<uint32_t>(FlashActivityColor.blue) * level / RGBLED::MaxBrightness));
+    }
     self.scheduler.ScheduleTaskDeltaTime(self.ledTaskId, 1 * MS);
 }
 
@@ -160,6 +199,7 @@ const char *AMIController::ModeName(Mode mode) {
     switch (mode) {
     case Mode::Mounting: return "mounting";
     case Mode::Idle: return "idle";
+    case Mode::Armed: return "armed";
     case Mode::Erasing: return "erasing";
     case Mode::Recording: return "recording";
     case Mode::Stopping: return "stopping";
@@ -185,6 +225,7 @@ void AMIController::QueueNotice(const char *format, ...) {
 
 void AMIController::BeginStream(Mode mode, uint32_t targetIndex) {
     flash.RewindReadCursor();
+    returnModeAfterStream_ = mode_;
     mode_ = mode;
     readTargetIndex_ = targetIndex;
     readIndex_ = 0;
@@ -212,51 +253,171 @@ void AMIController::ResetCaptureState() {
     stopRequested_ = false;
     writtenFlashPages_ = 0;
     droppedAccelSamples_ = 0;
+    capturedAccelSamples_ = 0;
+    flashAppendLastUs = 0;
+    flashAppendMaxUs = 0;
+}
+
+void AMIController::ResetArmDetection() {
+    armStrideCount_ = 0;
+    armBaselineCount_ = 0;
+    armAboveCount_ = 0;
+    for (unsigned axis = 0; axis < AXES; ++axis) {
+        armBaselineSum_[axis] = 0;
+        armBaseline_[axis] = 0;
+    }
+}
+
+void AMIController::SetDefaultLed(RGBLED::Color color) {
+    led.SetDefaultPulse(color, DefaultPulsePeriod);
+}
+
+void AMIController::ProcessArmSample(const int16_t *xyz) {
+    if (++armStrideCount_ < ArmCheckStride) return;
+    armStrideCount_ = 0;
+    if (armResetPending_.exchange(false, std::memory_order_relaxed)) ResetArmDetection();
+
+    if (armBaselineCount_ < ArmCalibrationChecks) {
+        for (unsigned axis = 0; axis < AXES; ++axis) armBaselineSum_[axis] += xyz[axis];
+        if (++armBaselineCount_ == ArmCalibrationChecks) {
+            for (unsigned axis = 0; axis < AXES; ++axis) {
+                armBaseline_[axis] = armBaselineSum_[axis] / ArmCalibrationChecks;
+            }
+        }
+        return;
+    }
+
+    // The baseline includes gravity at any setup angle and sensor bias.
+    // Squared magnitudes avoid a square root in the accelerometer path.
+    int64_t motionSquared = 0;
+    for (unsigned axis = 0; axis < AXES; ++axis) {
+        const int32_t delta = static_cast<int32_t>(xyz[axis]) - armBaseline_[axis];
+        motionSquared += static_cast<int64_t>(delta) * delta;
+    }
+    const int64_t thresholdSquared =
+        static_cast<int64_t>(armThresholdCounts_) * armThresholdCounts_;
+    if (motionSquared < thresholdSquared) {
+        armAboveCount_ = 0;
+        return;
+    }
+    if (++armAboveCount_ == ArmHoldChecks) {
+        mode_ = Mode::Recording;
+        stopRequested_ = false;
+        led.SetDefaultBlink(NormalPulse, RecordingBlinkPeriod);
+        led.QueueBlink({0, RGBLED::MaxBrightness, 0},
+                       FlightBlinkDuration, FlightBlinkPeriod);
+        QueueNotice("TRIGGER recording after 100 ms above threshold\r\n");
+    }
 }
 
 void AMIController::HandleCommand(char *line) {
     while (*line == ' ') ++line;
     char *endOfLine = line + std::strlen(line);
     while (endOfLine > line && endOfLine[-1] == ' ') *--endOfLine = '\0';
-    if (!*line) return;
+    if (!*line) {
+        eraseConfirmCount_ = 0;
+        return;
+    }
+    // Only three consecutive, separate erase commands can start a format.
+    if (std::strcmp(line, "erase") != 0) eraseConfirmCount_ = 0;
     if (mode_ == Mode::ReadOne || mode_ == Mode::DumpCsv || mode_ == Mode::DumpBin) {
         if (std::strcmp(line, "abort") == 0) abortRequested_ = true;
         return; // No text response may be interleaved with a stream.
     }
     if (std::strcmp(line, "help") == 0) {
-        QueueNotice("help | status | erase | record start | record stop | read <n> | dump csv | dump bin | abort\r\n");
+        QueueNotice("help | status | erase | arm [g] | disarm | record start | record stop | read <n> | dump csv | dump bin | abort\r\n");
         QueueNotice("read uses zero-based logical page numbers; dump bin uses UCP2 frames.\r\n");
+        QueueNotice("erase requires three consecutive erase commands.\r\n");
+        QueueNotice("arm defaults to 2 g motion after gravity baseline; hold 100 ms.\r\n");
     } else if (std::strcmp(line, "status") == 0) {
-        QueueNotice("STATUS mode=%s accel=%u connected=%u mounted=%u result=%s next=%u:%u written=%lu dropped=%lu rx_overflow=%lu\r\n",
+        QueueNotice("STATUS mode=%s accel=%u connected=%u mounted=%u result=%s next=%u:%u written=%lu captured=%lu dropped=%lu rx_overflow=%lu\r\n",
                     ModeName(mode_), accelReady_ ? 1U : 0U, flash.Connected() ? 1U : 0U,
                     flash.Mounted() ? 1U : 0U,
                     FlashResultName(flashResult_), flash.NextBlock(), flash.NextPage(),
                     static_cast<unsigned long>(writtenFlashPages_),
+                    static_cast<unsigned long>(capturedAccelSamples_),
                     static_cast<unsigned long>(droppedAccelSamples_),
                     static_cast<unsigned long>(usb.RxOverflows()));
+        if (mode_ == Mode::Armed) {
+            QueueNotice("ARM threshold_mg=%u baseline_ms=%u/%u hold_ms=%u/%u\r\n",
+                        static_cast<unsigned>(armThresholdCounts_) * 2U,
+                        static_cast<unsigned>(armBaselineCount_),
+                        static_cast<unsigned>(ArmCalibrationChecks),
+                        static_cast<unsigned>(armAboveCount_),
+                        static_cast<unsigned>(ArmHoldChecks));
+        }
     } else if (std::strcmp(line, "erase") == 0) {
         if (mode_ != Mode::Idle && mode_ != Mode::Error && mode_ != Mode::Full) {
+            eraseConfirmCount_ = 0;
             QueueNotice("ERR busy\r\n");
             return;
         }
         if (mode_ == Mode::Error &&
             (flashResult_ == W25N01GV::Result::SpiError ||
              flashResult_ == W25N01GV::Result::Timeout)) {
+            eraseConfirmCount_ = 0;
             QueueNotice("ERR reset board after SPI failure\r\n");
             return;
         }
+        if (++eraseConfirmCount_ < 3) {
+            QueueNotice("ERASE %u/3; type erase %u more time%s to erase all data\r\n",
+                        static_cast<unsigned>(eraseConfirmCount_),
+                        3U - static_cast<unsigned>(eraseConfirmCount_),
+                        eraseConfirmCount_ == 2 ? "" : "s");
+            return;
+        }
+        eraseConfirmCount_ = 0;
         flashResult_ = flash.FormatAsync();
         if (flashResult_ == W25N01GV::Result::Pending) {
             mode_ = Mode::Erasing;
-            QueueNotice("OK erase started\r\n");
+            QueueNotice("ERASE 3/3; OK erase started\r\n");
         } else {
             QueueNotice("ERR erase result=%s\r\n", FlashResultName(flashResult_));
         }
-    } else if (std::strcmp(line, "record start") == 0) {
+    } else if (std::strcmp(line, "arm") == 0 || std::strncmp(line, "arm ", 4) == 0) {
         if (mode_ != Mode::Idle || !flash.Mounted() || !accelReady_) {
             QueueNotice("ERR not ready mode=%s accel=%u\r\n", ModeName(mode_), accelReady_ ? 1U : 0U);
             return;
         }
+        uint16_t thresholdCounts = DefaultArmThresholdCounts;
+        if (line[3] != '\0') {
+            char *end = nullptr;
+            const float thresholdG = std::strtof(line + 4, &end);
+            if (end == line + 4 || *end != '\0' ||
+                !(thresholdG > 0.0f && thresholdG <= 60.0f)) {
+                QueueNotice("ERR use arm [threshold_g], between 0 and 60 g\r\n");
+                return;
+            }
+            thresholdCounts = static_cast<uint16_t>(thresholdG * 500.0f + 0.5f);
+            if (thresholdCounts == 0) {
+                QueueNotice("ERR threshold too small\r\n");
+                return;
+            }
+        }
+        armThresholdCounts_ = thresholdCounts;
+        armResetPending_.store(false, std::memory_order_relaxed);
+        ResetArmDetection();
+        mode_ = Mode::Armed;
+        SetDefaultLed(ArmedPulse);
+        QueueNotice("OK armed threshold_mg=%u; calibrating 100 ms, then hold 100 ms\r\n",
+                    static_cast<unsigned>(armThresholdCounts_) * 2U);
+    } else if (std::strcmp(line, "disarm") == 0) {
+        if (mode_ != Mode::Armed) {
+            QueueNotice("ERR not armed\r\n");
+            return;
+        }
+        mode_ = Mode::Idle;
+        ResetArmDetection();
+        SetDefaultLed(NormalPulse);
+        QueueNotice("OK disarmed\r\n");
+    } else if (std::strcmp(line, "record start") == 0) {
+        if ((mode_ != Mode::Idle && mode_ != Mode::Armed) ||
+            !flash.Mounted() || !accelReady_) {
+            QueueNotice("ERR not ready mode=%s accel=%u\r\n", ModeName(mode_), accelReady_ ? 1U : 0U);
+            return;
+        }
+        if (mode_ == Mode::Armed) SetDefaultLed(NormalPulse);
+        ResetArmDetection();
         stopRequested_ = false;
         mode_ = Mode::Recording;
         QueueNotice("OK recording\r\n");
@@ -271,7 +432,8 @@ void AMIController::HandleCommand(char *line) {
     } else if (std::strncmp(line, "read ", 5) == 0) {
         char *end = nullptr;
         const unsigned long target = std::strtoul(line + 5, &end, 10);
-        if (mode_ != Mode::Idle || line[5] < '0' || line[5] > '9' ||
+        if ((mode_ != Mode::Idle && mode_ != Mode::Full) ||
+            line[5] < '0' || line[5] > '9' ||
             end == line + 5 || *end ||
             target >= W25N01GV::BlockCount * (W25N01GV::PagesPerBlock - 1U) ||
             !flash.Mounted()) {
@@ -281,7 +443,7 @@ void AMIController::HandleCommand(char *line) {
         BeginStream(Mode::ReadOne, static_cast<uint32_t>(target));
         QueueNotice("OK read %lu\r\n", target);
     } else if (std::strcmp(line, "dump csv") == 0 || std::strcmp(line, "dump bin") == 0) {
-        if (mode_ != Mode::Idle || !flash.Mounted()) {
+        if ((mode_ != Mode::Idle && mode_ != Mode::Full) || !flash.Mounted()) {
             QueueNotice("ERR busy or not mounted\r\n");
             return;
         }
@@ -302,13 +464,16 @@ void AMIController::ProcessFlashTask() {
 
     if (self.mode_ == Mode::Mounting && !self.flash.Busy()) {
         self.flashResult_ = self.flash.LastResult();
-        self.mode_ = self.flashResult_ == W25N01GV::Result::Ok ? Mode::Idle : Mode::Error;
+        self.mode_ = self.flashResult_ != W25N01GV::Result::Ok ? Mode::Error :
+            (self.flash.NextBlock() >= W25N01GV::BlockCount ? Mode::Full : Mode::Idle);
+        if (self.mode_ == Mode::Full) self.SetDefaultLed(FullPulse);
         if (self.mode_ == Mode::Error) self.QueueNotice("ERR mount result=%s\r\n", FlashResultName(self.flashResult_));
     } else if (self.mode_ == Mode::Erasing && !self.flash.Busy()) {
         self.flashResult_ = self.flash.LastResult();
         if (self.flashResult_ == W25N01GV::Result::Ok) {
             self.ResetCaptureState();
             self.mode_ = Mode::Idle;
+            self.SetDefaultLed(NormalPulse);
             self.QueueNotice("DONE erase\r\n");
         } else {
             self.mode_ = Mode::Error;
@@ -319,6 +484,8 @@ void AMIController::ProcessFlashTask() {
     if (self.mode_ == Mode::Recording || self.mode_ == Mode::Stopping) {
         if (self.flashPagePending_ && !self.flash.Busy()) {
             self.flashPagePending_ = false;
+            flashAppendLastUs = (GetCurrentTime10us() - self.flashAppendStart10us_) * 10U;
+            if (flashAppendLastUs > flashAppendMaxUs) flashAppendMaxUs = flashAppendLastUs;
             self.flashResult_ = self.flash.LastResult();
             if (self.flashResult_ == W25N01GV::Result::Ok) {
                 self.capturePageStates_[self.inFlightPageIndex_] = CapturePageState::Free;
@@ -327,9 +494,16 @@ void AMIController::ProcessFlashTask() {
                     self.capturePageStates_[self.captureWriteIndex_] = CapturePageState::Filling;
                 }
                 ++self.writtenFlashPages_;
+                if (self.flash.NextBlock() >= W25N01GV::BlockCount) {
+                    self.mode_ = Mode::Full;
+                    self.SetDefaultLed(FullPulse);
+                    self.QueueNotice("DONE flash full pages=%lu\r\n",
+                                     static_cast<unsigned long>(self.writtenFlashPages_));
+                }
             } else {
                 // A timed-out DMA may still reference this page, so keep it reserved.
                 self.mode_ = self.flashResult_ == W25N01GV::Result::Full ? Mode::Full : Mode::Error;
+                if (self.mode_ == Mode::Full) self.SetDefaultLed(FullPulse);
                 self.QueueNotice("ERR write result=%s\r\n", FlashResultName(self.flashResult_));
             }
         }
@@ -337,6 +511,7 @@ void AMIController::ProcessFlashTask() {
             !self.flashPagePending_ && self.readyPageCount_ != 0) {
             self.flashResult_ = self.flash.AppendPageAsync(self.capturePages_[self.captureReadIndex_]);
             if (self.flashResult_ == W25N01GV::Result::Pending) {
+                self.flashAppendStart10us_ = GetCurrentTime10us();
                 self.capturePageStates_[self.captureReadIndex_] = CapturePageState::InFlight;
                 self.inFlightPageIndex_ = self.captureReadIndex_;
                 self.captureReadIndex_ = (self.captureReadIndex_ + 1) % CapturePageCount;
@@ -344,15 +519,18 @@ void AMIController::ProcessFlashTask() {
                 self.flashPagePending_ = true;
             } else if (self.flashResult_ != W25N01GV::Result::Busy) {
                 self.mode_ = self.flashResult_ == W25N01GV::Result::Full ? Mode::Full : Mode::Error;
+                if (self.mode_ == Mode::Full) self.SetDefaultLed(FullPulse);
                 self.QueueNotice("ERR write result=%s\r\n", FlashResultName(self.flashResult_));
             }
         }
         if (self.mode_ == Mode::Stopping && !self.flashPagePending_ &&
             self.readyPageCount_ == 0) {
             self.mode_ = Mode::Idle;
+            self.SetDefaultLed(NormalPulse);
             self.stopRequested_ = false;
-            self.QueueNotice("DONE record pages=%lu dropped=%lu\r\n",
+            self.QueueNotice("DONE record pages=%lu captured=%lu dropped=%lu\r\n",
                              static_cast<unsigned long>(self.writtenFlashPages_),
+                             static_cast<unsigned long>(self.capturedAccelSamples_),
                              static_cast<unsigned long>(self.droppedAccelSamples_));
         }
     }
@@ -374,7 +552,7 @@ void AMIController::ProcessFlashTask() {
                 }
             } else if (self.flashResult_ == W25N01GV::Result::EndOfLog) {
                 if (self.mode_ == Mode::ReadOne) {
-                    self.mode_ = Mode::Idle;
+                    self.mode_ = self.returnModeAfterStream_;
                     self.QueueNotice("ERR page out of range\r\n");
                 } else {
                     self.streamEnding_ = true;
@@ -392,7 +570,7 @@ void AMIController::ProcessFlashTask() {
                 self.readPending_ = true;
             } else if (self.flashResult_ == W25N01GV::Result::EndOfLog) {
                 if (self.mode_ == Mode::ReadOne) {
-                    self.mode_ = Mode::Idle;
+                    self.mode_ = self.returnModeAfterStream_;
                     self.QueueNotice("ERR page out of range\r\n");
                 } else {
                     self.streamEnding_ = true;
@@ -404,7 +582,11 @@ void AMIController::ProcessFlashTask() {
         }
     }
 
-    self.scheduler.ScheduleTaskDeltaTime(self.flashTaskId, 1 * MS);
+    // A page arrives about every 10.6 ms at 32 ksps. Poll the multi-command
+    // flash write more often while recording, without increasing idle CPU load.
+    const uint32_t flashPeriod = (self.mode_ == Mode::Recording ||
+                                  self.mode_ == Mode::Stopping) ? MS / 5U : MS;
+    self.scheduler.ScheduleTaskDeltaTime(self.flashTaskId, flashPeriod);
     const uint32_t elapsedCycles = DWT->CYCCNT - startCycles;
     flashProcessLastMs = static_cast<float>(elapsedCycles) * flashCyclesToMs;
     if (elapsedCycles > flashProcessMaxCycles) {
@@ -415,7 +597,7 @@ void AMIController::ProcessFlashTask() {
 
 void AMIController::FinishStream() {
     const Mode finished = mode_;
-    mode_ = Mode::Idle;
+    mode_ = returnModeAfterStream_;
     pageReady_ = false;
     readPending_ = false;
     streamEnding_ = false;
@@ -530,17 +712,23 @@ void AMIController::ProcessUSBTask() {
         self.mode_ == Mode::DumpCsv || self.mode_ == Mode::DumpBin)) {
         self.abortRequested_ = true;
         if (!self.readPending_) {
-            self.mode_ = Mode::Idle;
+            self.mode_ = self.returnModeAfterStream_;
             self.pageReady_ = false;
             self.streamEnding_ = false;
             self.abortRequested_ = false;
         }
+    }
+    if (!self.usb.Connected()) {
+        self.eraseConfirmCount_ = 0;
+        self.commandLength_ = 0;
+        self.commandOverflow_ = false;
     }
     const uint32_t overflows = self.usb.RxOverflows();
     if (overflows != self.seenRxOverflows_) {
         self.seenRxOverflows_ = overflows;
         self.commandLength_ = 0;
         self.commandOverflow_ = true;
+        self.eraseConfirmCount_ = 0;
     }
     uint8_t byte;
     // Keep one notice slot available for an asynchronous DONE/ERR completion.
@@ -549,6 +737,7 @@ void AMIController::ProcessUSBTask() {
         if (byte == '\r') continue;
         if (byte == '\n') {
             if (self.commandOverflow_) {
+                self.eraseConfirmCount_ = 0;
                 if (self.mode_ != Mode::ReadOne && self.mode_ != Mode::DumpCsv &&
                     self.mode_ != Mode::DumpBin) self.QueueNotice("ERR command too long or RX overflow\r\n");
             } else {
@@ -580,9 +769,14 @@ void AMIController::ProcessUSBTask() {
 
 void AMIController::ProcessADXLData(const int16_t *values, size_t count) {
     AMIController &self = *instance;
-    if (self.mode_ != Mode::Recording) return;
+    if (self.mode_ != Mode::Recording && self.mode_ != Mode::Armed) return;
     const size_t sampleSets = count / AXES;
     for (size_t i = 0; i < sampleSets; ++i) {
+        if (self.mode_ == Mode::Armed) {
+            self.ProcessArmSample(values + i * AXES);
+            continue;
+        }
+        if (self.mode_ != Mode::Recording) break;
         CapturePageState &state = self.capturePageStates_[self.captureWriteIndex_];
         if (state == CapturePageState::Free) state = CapturePageState::Filling;
         if (state != CapturePageState::Filling) {
@@ -602,6 +796,7 @@ void AMIController::ProcessADXLData(const int16_t *values, size_t count) {
             page[pageOffset + axis * 2] = static_cast<uint8_t>(raw);
             page[pageOffset + axis * 2 + 1] = static_cast<uint8_t>(raw >> 8);
         }
+        ++self.capturedAccelSamples_;
         if (++self.samplesInCapturePage_ == AccelSamplesPerPage) {
             state = CapturePageState::Ready;
             ++self.readyPageCount_;
@@ -620,6 +815,7 @@ void AMIController::ProcessADXLData(const int16_t *values, size_t count) {
 
 void AMIController::OnADXLRecovery() {
     instance->recoveryPulsePending.store(true, std::memory_order_relaxed);
+    instance->armResetPending_.store(true, std::memory_order_relaxed);
 }
 
 extern "C" {

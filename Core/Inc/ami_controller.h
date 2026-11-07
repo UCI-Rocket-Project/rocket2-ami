@@ -29,11 +29,15 @@ private:
         (W25N01GV::PayloadBytes - PageTimestampBytes) / 6;
     static constexpr size_t CapturePageCount = 3;
     static constexpr size_t NoticeCount = 8;
-    static constexpr size_t NoticeBytes = 160;
+    static constexpr size_t NoticeBytes = 192;
+    static constexpr uint16_t ArmCheckStride = 32; // 32 ksps / 32 = 1 kHz
+    static constexpr uint16_t ArmCalibrationChecks = 100; // 100 ms
+    static constexpr uint16_t ArmHoldChecks = 100; // 100 ms
+    static constexpr uint16_t DefaultArmThresholdCounts = 1000; // 2 g
 
     enum class CapturePageState : uint8_t { Free, Filling, Ready, InFlight };
     enum class Mode : uint8_t {
-        Mounting, Idle, Erasing, Recording, Stopping, ReadOne, DumpCsv, DumpBin,
+        Mounting, Idle, Armed, Erasing, Recording, Stopping, ReadOne, DumpCsv, DumpBin,
         Full, Error
     };
 
@@ -47,7 +51,16 @@ private:
     std::atomic<bool> recoveryPulsePending{false};
     bool accelReady_ = false;
     Mode mode_ = Mode::Mounting;
+    Mode returnModeAfterStream_ = Mode::Idle;
     W25N01GV::Result flashResult_ = W25N01GV::Result::NotConnected;
+    uint8_t eraseConfirmCount_ = 0;
+    std::atomic<bool> armResetPending_{false};
+    uint16_t armThresholdCounts_ = DefaultArmThresholdCounts;
+    uint16_t armStrideCount_ = 0;
+    uint16_t armBaselineCount_ = 0;
+    uint16_t armAboveCount_ = 0;
+    int32_t armBaselineSum_[AXES]{};
+    int32_t armBaseline_[AXES]{};
 
     // DMA owns an InFlight page until the append completes.
     alignas(4) uint8_t capturePages_[CapturePageCount][W25N01GV::PageBytes]{};
@@ -60,7 +73,9 @@ private:
     bool flashPagePending_ = false;
     bool stopRequested_ = false;
     uint32_t droppedAccelSamples_ = 0;
+    uint32_t capturedAccelSamples_ = 0;
     uint32_t writtenFlashPages_ = 0;
+    uint32_t flashAppendStart10us_ = 0;
 
     // One sequential read at a time. The payload remains stable throughout USB TX.
     uint8_t readPayload_[W25N01GV::PayloadBytes]{};
@@ -95,6 +110,9 @@ private:
     void HandleCommand(char *line);
     void BeginStream(Mode mode, uint32_t targetIndex = 0);
     void ResetCaptureState();
+    void ResetArmDetection();
+    void ProcessArmSample(const int16_t *xyz);
+    void SetDefaultLed(RGBLED::Color color);
     void ProcessStreamOutput();
     void FinishStream();
     static const char *ModeName(Mode mode);
