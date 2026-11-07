@@ -600,11 +600,13 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(ACCEL_nCS_GPIO_Port, ACCEL_nCS_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, MEM_nCS_Pin|IMU_GYRO_nCS_Pin|IMU_ACCEL_nCS_Pin|ALT_nCS_Pin
-                          |TC_nCS_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(MEM_nCS_GPIO_Port, MEM_nCS_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOC, MEM_nWP_Pin|MEM_nHOLD_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, IMU_GYRO_nCS_Pin|IMU_ACCEL_nCS_Pin|ALT_nCS_Pin|TC_nCS_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : ACCEL_INT1_Pin ACCEL_INT0_Pin */
   GPIO_InitStruct.Pin = ACCEL_INT1_Pin|ACCEL_INT0_Pin;
