@@ -4,6 +4,7 @@
 #include "task_scheduler.h"
 #include "led.h"
 #include "accel_adxl383.h"
+#include "w25n01gv.h"
 #include <atomic>
 
 #define MS 100
@@ -18,6 +19,7 @@ class AMIController {
 
     // Hardware
     ADXL383 accel;
+    W25N01GV flash;
 
   private:
 
@@ -25,6 +27,7 @@ class AMIController {
     TaskScheduler<10, 3> scheduler;
     size_t ledTaskId;
     size_t adxlTaskId;
+    size_t flashTaskId;
     size_t RECINDUCERTASK;
 
     // Hardware
@@ -34,6 +37,7 @@ class AMIController {
     // Task callbacks
     static void ProcessLEDTask();
     static void ProcessADXLTask();
+    static void ProcessFlashTask();
     static void ProcessADXLData(const int16_t *values, size_t count);
     static void OnADXLRecovery();
     static void RECINDUCE();

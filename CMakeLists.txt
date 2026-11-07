@@ -50,6 +50,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     RocketDrivers/task_scheduler/task_scheduler.tpp
     RocketDrivers/led_aptf1616/led.cpp
     RocketDrivers/accel_adxl383/accel_adxl383.cpp
+    RocketDrivers/memory_w25n01gv_spi/w25n01gv.cpp
 )
 
 # Add include paths
@@ -58,6 +59,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     RocketDrivers/task_scheduler
     RocketDrivers/led_aptf1616
     RocketDrivers/accel_adxl383
+    RocketDrivers/memory_w25n01gv_spi
 )
 
 # Add project symbols (macros)

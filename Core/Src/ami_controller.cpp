@@ -33,6 +33,8 @@ inline uint32_t GetCurrentTime10us() {
 
 AMIController::AMIController(): accel(&hspi1, ACCEL_nCS_GPIO_Port, ACCEL_nCS_Pin, ACCEL_INT0_Pin,
         ProcessADXLData, OnADXLRecovery, GetCurrentTime10us),
+    flash(&hspi2, MEM_nCS_GPIO_Port, MEM_nCS_Pin,
+          MEM_nWP_GPIO_Port, MEM_nWP_Pin, MEM_nHOLD_GPIO_Port, MEM_nHOLD_Pin),
     scheduler(GetCurrentTime10us),
     led(&htim2, TIM_CHANNEL_4, &htim2, TIM_CHANNEL_3, &htim3, TIM_CHANNEL_4) {
     instance = this;
@@ -66,6 +68,13 @@ void AMIController::Init() {
     */
     allPeripheralsGood &= accel.Init();
 
+    /* Connect is blocking; the flash scan starts asynchronously below. */
+    const bool flashConnected = flash.ConnectBlocking() == W25N01GV::Result::Ok;
+    allPeripheralsGood &= flashConnected;
+    if (flashConnected) {
+        allPeripheralsGood &= flash.MountAsync() == W25N01GV::Result::Pending;
+    }
+
     if (allPeripheralsGood) {
         led.QueueBlink({0, RGBLED::MaxBrightness * 4 / 5, 0}, 3000 * MS, 500 * MS);
     } else {
@@ -78,9 +87,11 @@ void AMIController::Init() {
     */
     ledTaskId = *scheduler.AddTask(ProcessLEDTask, 0);
     adxlTaskId = *scheduler.AddTask(ProcessADXLTask, 0);
+    flashTaskId = *scheduler.AddTask(ProcessFlashTask, 0);
     RECINDUCERTASK = *scheduler.AddTask(RECINDUCE, 0);
 
     scheduler.ScheduleTaskDeltaTime(adxlTaskId, 0);
+    scheduler.ScheduleTaskDeltaTime(flashTaskId, 0);
     scheduler.ScheduleTaskDeltaTime(ledTaskId, 0);
     scheduler.ScheduleTaskDeltaTime(RECINDUCERTASK, 10 * 1000 * MS);
 }
@@ -105,6 +116,11 @@ void AMIController::ProcessLEDTask() {
 void AMIController::ProcessADXLTask() {
     instance->accel.ProcessTask();
     instance->scheduler.ScheduleTaskDeltaTime(instance->adxlTaskId, 0.1 * MS);
+}
+
+void AMIController::ProcessFlashTask() {
+    instance->flash.ProcessTask();
+    instance->scheduler.ScheduleTaskDeltaTime(instance->flashTaskId, 0.1 * MS);
 }
 
 void AMIController::RECINDUCE() {
@@ -146,5 +162,10 @@ extern "C" {
 
     void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi) {
         AMIController::instance->accel.TxCompleteCallback(hspi);
+        AMIController::instance->flash.TxRxCompleteCallback(hspi);
+    }
+
+    void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *hspi) {
+        AMIController::instance->flash.SpiErrorCallback(hspi);
     }
 }

@@ -45,6 +45,8 @@ SPI_HandleTypeDef hspi2;
 SPI_HandleTypeDef hspi3;
 DMA_HandleTypeDef hdma_spi1_rx;
 DMA_HandleTypeDef hdma_spi1_tx;
+DMA_HandleTypeDef hdma_spi2_rx;
+DMA_HandleTypeDef hdma_spi2_tx;
 
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
@@ -575,6 +577,12 @@ static void MX_DMA_Init(void)
   /* DMA1_Channel3_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Channel3_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel3_IRQn);
+  /* DMA1_Channel4_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel4_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel4_IRQn);
+  /* DMA1_Channel5_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel5_IRQn);
 
 }
 
@@ -603,7 +611,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(MEM_nCS_GPIO_Port, MEM_nCS_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, MEM_nWP_Pin|MEM_nHOLD_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, MEM_nWP_Pin|MEM_nHOLD_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, IMU_GYRO_nCS_Pin|IMU_ACCEL_nCS_Pin|ALT_nCS_Pin|TC_nCS_Pin, GPIO_PIN_RESET);
