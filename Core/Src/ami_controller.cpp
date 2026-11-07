@@ -585,7 +585,7 @@ void AMIController::ProcessFlashTask() {
     // A page arrives about every 10.6 ms at 32 ksps. Poll the multi-command
     // flash write more often while recording, without increasing idle CPU load.
     const uint32_t flashPeriod = (self.mode_ == Mode::Recording ||
-                                  self.mode_ == Mode::Stopping) ? MS / 5U : MS;
+                                  self.mode_ == Mode::Stopping) ? MS / 4U : MS;
     self.scheduler.ScheduleTaskDeltaTime(self.flashTaskId, flashPeriod);
     const uint32_t elapsedCycles = DWT->CYCCNT - startCycles;
     flashProcessLastMs = static_cast<float>(elapsedCycles) * flashCyclesToMs;
